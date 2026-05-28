@@ -22,6 +22,10 @@
     _cert_ca_extension: >-
       {{ (ansible_facts['os_family'] == 'RedHat') | ternary('pem', 'crt') }}
 
+- name: Set TLS certificate generation variables
+  ansible.builtin.set_fact:
+    _cert_enabled_generate_certificates: "{{ in_enabled_generate_certificates | default(false) | bool }}"
+
 - name: Fetch CA certificates
   no_log: true
   ansible.builtin.uri:
@@ -102,7 +106,10 @@
   loop_control:
     index_var: cert_idx
   no_log: true
-  when: in_tls_certificates | length > 0
+  run_once: true
+  when:
+    - _cert_enabled_generate_certificates
+    - in_tls_certificates | length > 0
 
 - name: Issue TLS certificates from Vault PKI
   no_log: true
@@ -121,7 +128,10 @@
     validate_certs: false
   register: tls_certs_response
   loop: "{{ in_tls_certificates }}"
-  when: in_tls_certificates | length > 0
+  run_once: true
+  when:
+    - _cert_enabled_generate_certificates
+    - in_tls_certificates | length > 0
   check_mode: false
 
 - name: Create directories for TLS certificates
@@ -151,6 +161,7 @@
   when:
     - indexed_tls_certs is defined
     - indexed_tls_certs | length > 0
+    - tls_certs_response is defined
 
 - name: Create directories for TLS private keys
   no_log: true
@@ -166,6 +177,7 @@
   when:
     - indexed_tls_certs is defined
     - indexed_tls_certs | length > 0
+    - tls_certs_response is defined
 
 - name: Save TLS private keys
   no_log: true
@@ -179,6 +191,7 @@
   when:
     - indexed_tls_certs is defined
     - indexed_tls_certs | length > 0
+    - tls_certs_response is defined
 
 - name: Save TLS CA chains
   no_log: true
@@ -190,7 +203,9 @@
   loop_control:
     index_var: loop_index
   when:
+    - _cert_enabled_generate_certificates
     - in_tls_certificates | length > 0
+    - tls_certs_response is defined
     - item.ca_file is defined
 
 - name: Create directories for TLS PEM files
@@ -207,6 +222,7 @@
   when:
     - indexed_tls_certs is defined
     - indexed_tls_certs | length > 0
+    - tls_certs_response is defined
 
 - name: Save TLS PEM files (cert + key)
   no_log: true
@@ -222,3 +238,4 @@
   when:
     - indexed_tls_certs is defined
     - indexed_tls_certs | length > 0
+    - tls_certs_response is defined

@@ -22,6 +22,7 @@ Rola Ansible certificates — zarządzanie certyfikatami CA i TLS (Vault PKI) w 
 | `in_certificates_vault_addr` | `https://vault.rachuna.dev` | Adres serwera HashiCorp Vault |
 | `in_certificates` | `{}` | Słownik certyfikatów CA do pobrania |
 | `in_certificates_bundle_paths` | `[]` | Opcjonalna lista ścieżek plików z połączonymi certyfikatami CA z `in_certificates` |
+| `in_enabled_generate_certificates` | `false` | Włącza generowanie certyfikatów TLS z Vault PKI |
 | `in_tls_certificates` | `[]` | Lista certyfikatów TLS do wydania przez Vault PKI |
 
 ### Struktura `in_certificates`
@@ -41,6 +42,7 @@ in_certificates_bundle_paths:           # opcjonalne - wszystkie CA w jednym pli
 ### Struktura `in_tls_certificates`
 
 ```yaml
+in_enabled_generate_certificates: true
 in_tls_certificates:
   - pki: pki_int                    # ścieżka silnika PKI w Vault
     role: my-role                   # nazwa roli PKI
@@ -59,6 +61,9 @@ in_tls_certificates:
     ca_file: /etc/app/ca-chain.crt  # opcjonalne - łańcuch CA
 ```
 
+Certyfikaty TLS są wydawane tylko, gdy `in_enabled_generate_certificates` ma wartość `true`.
+Zadanie wydania certyfikatu w Vault PKI działa z `run_once`, więc w ramach jednego przebiegu playbooka certyfikat jest generowany raz, a następnie zapisywany na hostach objętych playem.
+
 ## Przykład użycia
 
 ```yaml
@@ -72,6 +77,7 @@ in_tls_certificates:
           internal_ca:
             name: internal-ca
             url: https://vault.example.com/v1/pki/ca/pem
+        in_enabled_generate_certificates: true
         in_tls_certificates:
           - pki: pki_int
             role: webserver
