@@ -1,4 +1,6 @@
-# <img src=".gitlab/ansible.png" alt="ansible" height="20"/> certificates
+# <img src=".gitlab/ansible.png" alt="ansible" height="30"/> certificates
+
+::include{file=.gitlab/badges.md}
 
 Rola Ansible certificates — zarządzanie certyfikatami CA i TLS (Vault PKI) w infrastrukturze rachuna.dev.
 
@@ -108,21 +110,4 @@ Zadanie wydania certyfikatu w Vault PKI działa z `run_once`, więc w ramach jed
 
 ---
 
-## Contributions
-
-Jeśli masz pomysły na ulepszenia, zgłoś problemy, rozwidl repozytorium lub utwórz Merge Request. Wszystkie wkłady są mile widziane!
-[Contributions](CONTRIBUTING.md)
-
----
-
-## License
-
-[Licencja](LICENSE) oparta na zasadach Creative Commons BY-NC-SA 4.0, dostosowana do potrzeb projektu.
-
----
-
-## Author Information
-
-| ![Maciej Rachuna](https://gitlab.com/uploads/-/system/user/avatar/8161705/avatar.png?width=120px) |
-|---------------------------------------------------------------------------------------------------|
-| [Maciej Rachuna](https://gitlab.commrachuna)                                                      |
+::include{file=.gitlab/footer.md}
